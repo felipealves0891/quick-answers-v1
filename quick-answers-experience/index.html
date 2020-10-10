@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <title>Quick Answers</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css\style.css">
+        <script type="text/x-template" id="item-template">
+            <li :title="item.description"
+                :class="{'folder': isFolder, 'open': isOpen, 'file': !isFolder}">
+                <div class="optionTree"
+                    @click="toggle"
+                    @dblclick="makeFolder">
+                    <div class="custom-control custom-radio" v-if="!isFolder">
+                        <input 
+                            type="radio"
+                            class="custom-control-input"
+                            name="item" 
+                            v-model="selected"
+                            v-bind:id="'item' + item.id"
+                            v-on:change="$emit('update:typification', item)">
+                        <label class="custom-control-label" :for="'item' + item.id">{{ item.name }}</label>
+                    </div>
+                    <span v-if="isFolder">{{ item.name }}</span>
+                </div>
+                <ul class="branchTree" v-show="isOpen" v-if="isFolder">
+                    <tree-item
+                        class="item"
+                        v-for="(child, index) in item.children"
+                        :key="index"
+                        :item="child"
+                        v-on:update:typification="$emit('update:typification', $event)"
+                    ></tree-item>
+                </ul>
+            </li>
+        </script>
+    </head>
+    <body>
+        <div id="app">
+            <header>
+                <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                    <div class="container">
+                        <a class="navbar-brand" href="/">{{name}}</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item active">
+                                    <a class="nav-link" v-on:click="openHistoric" href="#">Historico <span class="sr-only">(current)</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <main>
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label>Tipo</label>
+                                <select class="form-control" v-model="customerService.validator">
+                                    <option>Selecione um tipo...</option>
+                                    <option v-for="x in validators" :id="x.id" :value="x">{{x.name}}</option>
+                                </select>
+                            </div>
+                            <div class="form-group" :class="{'d-none': !customerService.validator.regex, 'is-invalid': errors.identifier.status}">
+                                <label for="customer">Cliente</label>
+                                <input type="text" v-model="customerService.identifier" class="form-control" aria-describedby="customerHelp"
+                                       :pattern="customerService.validator.regex" 
+                                       :placeholder="customerService.validator.example"
+                                       :class="{'is-invalid': errors.identifier.status}">
+                                <small id="customerHelp" class="text-muted">{{errors.identifier.message}}</small>
+                            </div>
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-primary" 
+                                :class="{'d-none': !customerService.validator.regex}" 
+                                v-on:click="startService"
+                            >Iniciar Atendimento</button>
+                        </div>
+                        <div class="col-8">
+                            <div class="img-section">
+                                <img src="img\undraw_customer_survey.svg" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>             
+                </div>
+            </main>
+            <div class="modal fade" id="viewService" tabindex="-1" role="dialog" aria-labelledby="viewServiceTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="alert alert-danger" role="alert" v-if="errors.customerService.status">
+                                {{errors.customerService.message}}
+                            </div>
+                            <div class="row">
+                                <div class="container">
+                                    <div class="panelTree">
+                                        <h3>Arvore de Tabulação</h3>
+                                        <ul class="typificationTree">
+                                            <tree-item v-for="typification in typifications"
+                                                class="item"
+                                                v-bind:item="typification"
+                                                v-on:update:typification="customerService.typification = $event"
+                                            ></tree-item>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" v-on:click="endService">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Visão historico -->
+            <div class="modal fade" id="viewHistoric" tabindex="-1" role="dialog" aria-labelledby="viewHistoricTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-light">
+                            <h5 class="modal-title">Historico</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-3 text-center">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-sm" placeholder="Digite o Identificador procurado..." v-model="search.historic.identifier" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row historic-header">
+                                    <div class="col-1 text-center">#</div>
+                                    <div class="col-2 text-center">Validação</div>
+                                    <div class="col-2 text-center">Identificador</div>
+                                    <div class="col-3 text-center">Tipo</div>
+                                    <div class="col-2 text-center">Inicio</div>
+                                    <div class="col-2 text-center">Fim</div>
+                                </div>
+                                <div class="historic-list shadow p-1 mb-3 bg-white">
+                                    <div class="row historic-row" v-for="x in filterHistory">
+                                        <div class="col-1 text-center">{{x.customerServiceId}}</div>
+                                        <div class="col-2 text-center">{{x.validator.name}}</div>
+                                        <div class="col-2 text-center">{{x.identifier}}</div>
+                                        <div class="col-3 text-center">{{x.typification.name}}</div>
+                                        <div class="col-2 text-center">{{x.startService}}</div>
+                                        <div class="col-2 text-center">{{x.endService}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-success text-light">
+                    <strong class="mr-auto">Quick Answers</strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span class="text-light" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">
+                    Salvo com sucesso!
+                </div>
+            </div>
+        </div>
+
+        <script src="https://momentjs.com/downloads/moment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="js\scripts.js"></script>
+    </body>
+</html>

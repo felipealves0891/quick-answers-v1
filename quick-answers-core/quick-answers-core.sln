@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QAC.Application", "src\QAC.Application\QAC.Application.csproj", "{B1BD487B-367D-40AE-AC13-03A3CD9EE3F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1BD487B-367D-40AE-AC13-03A3CD9EE3F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1BD487B-367D-40AE-AC13-03A3CD9EE3F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1BD487B-367D-40AE-AC13-03A3CD9EE3F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1BD487B-367D-40AE-AC13-03A3CD9EE3F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {207B89A6-CD71-4078-A06B-30793CC6851E}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,59 @@
+{
+	"typification" : [
+	
+		{
+			"Name": "Alô",
+			"Nickname": "Alô",
+			"Description": "Sempre que tiver uma resposta humana",
+			"ExternalId": "type_01"
+		},
+		{
+			"Name": "Não Alô",
+			"Nickname": "Não Alô",
+			"Description": "Sempre que não tiver uma resposta humana",
+			"ExternalId": "type_02"
+		},
+		{
+			"Name": "Recusa",
+			"Nickname": "Recusa",
+			"Description": "Cliente recusou a oferta!",
+			"ExternalId": "type_03",
+			"ParentId": 1
+		},
+		{
+			"Name": "Sucesso",
+			"Nickname": "Sucesso",
+			"Description": "Cliente aceitou a oferta!",
+			"ExternalId": "type_04",
+			"ParentId": 1
+		},
+		{
+			"Name": "Não Atende",
+			"Nickname": "Não Atende",
+			"Description": "Telefone não atende!",
+			"ExternalId": "type_05",
+			"ParentId": 2
+		},
+		{
+			"Name": "Venda",
+			"Nickname": "Venda",
+			"Description": "Venda de maquina!",
+			"ExternalId": "type_06",
+			"ParentId": 4
+		}
+
+	],
+	"IdentificationValidator": [
+		{
+			"Name": "CPF",
+			"Example": "000.000.000-00",
+			"Regex": "^((\d{3}).(\d{3}).(\d{3})-(\d{2}))*$"
+		},
+		{
+			"Name": "CNPJ",
+			"Example": "00.000.000/0000-00",
+			"Regex": "^((\\d{2}).(\\d{3}).(\\d{3})/(\\d{4})-(\\d{2}))*$"
+		}
+		
+	]
+}
